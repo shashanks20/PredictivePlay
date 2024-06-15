@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .prediction-form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+        }
+
+        .form-group label {
+            font-weight: bold;
+        }
+
+        .predict-btn {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .predict-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <title>Predictive Play - Predict Form</title>
+</head>
+<body>
+{{>prednavbar}}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="prediction-form">
+                <h2>Predict Your Match</h2>
+                <form action="/predict" method="POST">
+                    <div class="form-group">
+                        <label for="matchDropdown">Select Match</label>
+                        <select class="form-control" id="matchDropdown" name="match">
+                            <option>Select</option>
+                            {{#each details}}
+                            <option value="{{_id}}">{{MatchTeams}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="teamADropdown">Select Your Team</label>
+                      <select class="form-control" id="teamADropdown" name="predicted">  
+                       </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block predict-btn" onclick="submitForm()">Predict</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+ <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#matchDropdown').on('change', function() {
+            var selectedMatchId = $(this).val();
+            console
+            $.ajax({
+                url: '/fetch-columns/' + selectedMatchId, // Update the endpoint to match your server route
+                method: 'GET',
+                success: function(data) {
+                    // Assuming the response contains the columnName data
+                    var teamDropdown = $('#teamADropdown');
+                    teamDropdown.empty();
+                    teamDropdown.append('<option>Select</option>');
+                    teamDropdown.append('<option value='+data[`TeamA`]+'>' + data[`TeamA`] + '</option>');
+                    teamDropdown.append('<option value='+data[`TeamB`]+'>' + data[`TeamB`] + '</option>');
+                },
+                error: function(err) {
+                    console.error('Error fetching column data:', err);
+                }
+            });
+        });
+    });
+
+</script>
+</body>
+</html>
