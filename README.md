@@ -22,7 +22,7 @@ PredictivePlay is a database-driven project that integrates user login and predi
 
 2. Navigate to the project directory:
     ```sh
-    cd WebApp
+    cd predictiveplay
     ```
 
 3. Install the dependencies:
