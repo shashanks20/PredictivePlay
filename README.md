@@ -39,18 +39,6 @@ PredictivePlay is a database-driven project that integrates user login and predi
 
 2. Open your browser and navigate to `http://localhost:3000` to view the application.
 
-## Scripts
-
-- **test:** Runs the test script (currently not specified).
-    ```sh
-    npm test
-    ```
-
-- **dev:** Starts the development server using nodemon, watching for changes in `.js` and `.hbs` files.
-    ```sh
-    npm run dev
-    ```
-
 ## Dependencies
 
 - **express:** ^4.18.2
