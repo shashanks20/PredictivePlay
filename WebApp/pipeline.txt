@@ -1,0 +1,116 @@
+[
+  {
+    $match: {
+      Date: "01-01-2024",
+    },
+  },
+  {
+    $addFields: {
+      Winner: "BengaluruBulls",
+      status: 1,
+    },
+  },
+  {
+    $project: {
+      TeamA: 0,
+      TeamB: 0,
+    },
+  },
+  {
+    $lookup: {
+      from: "submissions",
+      let: {
+        localId: "$_id",
+        localWinner: "$Winner",
+      },
+      pipeline: [
+        {
+          $match: {
+            $expr: {
+              $and: [
+                {
+                  $eq: ["$MatchID", "$$localId"],
+                },
+                {
+                  $eq: ["$Team", "$$localWinner"],
+                },
+              ],
+            },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            Username: 1,
+          },
+        },
+      ],
+      as: "joinedData",
+    },
+  },
+  {
+    $unwind: {
+      path: "$joinedData",
+    },
+  },
+  {
+    $lookup: {
+      from: "users",
+      let: {
+        localUsername: "$joinedData.Username",
+      },
+      pipeline: [
+        {
+          $match: {
+            $expr: {
+              $eq: [
+                "$Username",
+                "$$localUsername",
+              ],
+            },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            Username: 1,
+            Score: 1,
+          },
+        },
+      ],
+      as: "userToUpdate",
+    },
+  },
+  {
+    $unwind: {
+      path: "$userToUpdate",
+    },
+  },
+  {
+    $set: {
+      "userToUpdate.Score": {
+        $add: ["$userToUpdate.Score", 50],
+      },
+    },
+  },
+  {
+    $project:
+      /**
+       * specifications: The fields to
+       *   include or exclude.
+       */
+      {
+        userToUpdate: true,
+        _id: 0,
+      },
+  },
+  {
+    $merge: {
+      into: "users",
+      on: "Username",
+      whenMatched: "merge",
+    },
+  },
+]
+
+
